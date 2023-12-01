@@ -21,11 +21,17 @@ defmodule UofFeed do
     # Since the queue names seem to be unique on each connection, I also added `auto_delete: true`,
     # though it's rather a broker issue to worry about dangling queues.
     queue_opts = [passive: false, exclusive: true, durable: false, auto_delete: true]
-    {:ok, %{queue: queue_name}} = AMQP.Queue.declare(chan, "", queue_opts)
-    IO.inspect(queue_name, label: :queue_name)
+    {:ok, %{queue: queue}} = AMQP.Queue.declare(chan, "", queue_opts)
+    IO.inspect(queue, label: :queue_name)
 
     exchange = "unifiedfeed"
     bind_opts = [routing_key: "#"]
-    AMQP.Queue.bind(chan, queue_name, exchange, bind_opts)
+    AMQP.Queue.bind(chan, queue, exchange, bind_opts)
+
+    {:ok, chan, queue}
+  end
+
+  def recv(chan, queue) do
+    {:ok, payload, meta} = AMQP.Basic.get(chan, queue)
   end
 end
