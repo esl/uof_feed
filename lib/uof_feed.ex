@@ -41,6 +41,21 @@ defmodule UofFeed do
   def get_one_message do
     {:ok, chan, q} = connect()
     {:ok, xml, meta} = recv(chan, q)
+    xml |> xml_to_elixir()
+  end
+
+  def xml_to_elixir(xml) do
     xml |> to_charlist |> :xmerl_scan.string() |> elem(0) |> :xmerl_lib.simplify_element()
+  end
+
+  # Another demo, this one listens continuosly for incoming messages
+  # and prints them as they come.
+  def connect_and_subscribe do
+    {:ok, chan, q} = connect()
+    handler = fn xml, _meta ->
+      map = xml |> xml_to_elixir()
+      IO.inspect(map, label: :received, limit: :infinity)
+    end
+    {:ok, _} = AMQP.Queue.subscribe(chan, q, handler)
   end
 end
