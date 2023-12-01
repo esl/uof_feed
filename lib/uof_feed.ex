@@ -34,4 +34,13 @@ defmodule UofFeed do
   def recv(chan, queue) do
     {:ok, payload, meta} = AMQP.Basic.get(chan, queue)
   end
+
+  # Just a demo for the shell, this might or might NOT work,
+  # depending on whether there's a message waiting in the queue.
+  # If there's no message, we'll get a badmatch on {:empty, %{cluster_id: ""}}
+  def get_one_message do
+    {:ok, chan, q} = connect()
+    {:ok, xml, meta} = recv(chan, q)
+    xml |> to_charlist |> :xmerl_scan.string() |> elem(0) |> :xmerl_lib.simplify_element()
+  end
 end
