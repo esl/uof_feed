@@ -1,6 +1,11 @@
 defmodule UofFeed do
   @moduledoc false
 
+  # This is a quick and dirty way of setting up default conn params
+  # for convenient use from the shell.
+  # It'll be dropped once we have proper config access.
+  def connect(env \\ :integration, token \\ "0ur-t0k3n", bookmaker_id \\ 12345)
+
   def connect(env, token, bookmaker_id) do
     {uri, opts} = UofFeed.Config.amqp_opts(env, token, bookmaker_id)
     {:ok, conn} = AMQP.Connection.open(uri, opts)
