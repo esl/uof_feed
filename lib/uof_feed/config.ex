@@ -11,9 +11,15 @@ defmodule UofFeed.Config do
     proxy_tokyo:        [amqp: "mq.ap-northeast-1.betradar.com", api: "api.ap-northeast-1.betradar.com"]
   ]
 
-  def endpoints(_environment)
-
-  for {k, v} <- @environments do
-    def endpoints(unquote(k)), do: unquote(v)
+  def amqp_opts(env, token, bookmaker_id, port \\ 5671) do
+    scheme = "amqps"
+    host = @environments[env][:amqp]
+    {
+      "#{scheme}://#{token}@#{host}",
+      [
+        port: port,
+        virtual_host: "/unifiedfeed/#{bookmaker_id}"
+      ]
+    }
   end
 end
