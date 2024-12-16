@@ -78,7 +78,7 @@ defmodule UofFeed.DataSchema.Utils do
   @spec to_boolean(data :: String.t()) :: {:ok, boolean()}
   def to_boolean("true"), do: {:ok, true}
   def to_boolean("false"), do: {:ok, false}
-  def to_boolean(d), do: {:ok, nil}
+  def to_boolean(_), do: {:ok, nil}
 
   defp maybe_convert("", _), do: nil
   defp maybe_convert(data, :integer), do: String.to_integer(data)
