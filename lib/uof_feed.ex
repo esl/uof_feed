@@ -1,61 +1,38 @@
 defmodule UofFeed do
-  @moduledoc false
+  @moduledoc """
+  Delegate XML handling to appropiate handler.
+  Convenience functions for working with AMQP connections.
+  """
+  alias UofFeed.AMQP.Config
 
-  # This is a quick and dirty way of setting up default conn params
-  # for convenient use from the shell.
-  # It'll be dropped once we have proper config access.
-  def connect(env \\ :integration, token \\ "0ur-t0k3n", bookmaker_id \\ 12345)
+  @handler Application.compile_env!(:uof_feed, :amqp_handler)
 
-  def connect(env, token, bookmaker_id) do
-    {uri, opts} = UofFeed.Config.amqp_opts(env, token, bookmaker_id)
-    {:ok, conn} = AMQP.Connection.open(uri, opts)
-    {:ok, chan} = AMQP.Channel.open(conn)
+  defdelegate handle_message(msg), to: @handler
 
-    # From https://iodocs.betradar.com/unifiedsdk/Betradar_Unified-Odds_Developer_Integration.pdf
-    #
-    #   Queue: You cannot create your own queues.
-    #          Instead you have to request a server named queue (empty queue name in the request).
-    #          Passive, Exclusive, Nondurable.
-    #
-    # I tried `passive` queue, but the call errored out. Only `passive: false` seems to work.
-    # Since the queue names seem to be unique on each connection, I also added `auto_delete: true`,
-    # though it's rather a broker issue to worry about dangling queues.
-    queue_opts = [passive: false, exclusive: true, durable: false, auto_delete: true]
-    {:ok, %{queue: queue}} = AMQP.Queue.declare(chan, "", queue_opts)
-    IO.inspect(queue, label: :queue_name)
+  @doc """
+  Convenience function to set up AMQP connection and consume messages
+  using `handler/2` function.
 
-    exchange = "unifiedfeed"
-    bind_opts = [routing_key: "#"]
-    AMQP.Queue.bind(chan, queue, exchange, bind_opts)
+  The `handler/2` function must have an arity of 2, the first parameter will always
+  be a binary with the XML message and the second will be a Map with the message properties.
 
-    {:ok, chan, queue}
-  end
+  ## Example
 
-  def recv(chan, queue) do
-    {:ok, payload, meta} = AMQP.Basic.get(chan, queue)
-  end
+  iex> UofFeed.connect_and_subscribe(:integration, "token", 12345, fn xml, _meta -> IO.inspect(xml) end)
 
-  # Just a demo for the shell, this might or might NOT work,
-  # depending on whether there's a message waiting in the queue.
-  # If there's no message, we'll get a badmatch on {:empty, %{cluster_id: ""}}
-  def get_one_message do
-    {:ok, chan, q} = connect()
-    {:ok, xml, meta} = recv(chan, q)
-    xml |> xml_to_elixir()
-  end
-
-  def xml_to_elixir(xml) do
-    xml |> to_charlist |> :xmerl_scan.string() |> elem(0) |> :xmerl_lib.simplify_element()
-  end
-
-  # Another demo, this one listens continuosly for incoming messages
-  # and prints them as they come.
-  def connect_and_subscribe do
-    {:ok, chan, q} = connect()
-    handler = fn xml, _meta ->
-      map = xml |> xml_to_elixir()
-      IO.inspect(map, label: :received, limit: :infinity)
+  """
+  @spec connect_and_subscribe(
+          environment :: atom(),
+          amqp_token :: String.t(),
+          bookmaker_id :: integer(),
+          handler :: function()
+        ) :: {:ok, String.t()} | {:error, :invalid_environment} | AMQP.Basic.error()
+  def connect_and_subscribe(env, token, bookmaker_id, handler) do
+    with {:ok, {uri, opts}} <- Config.amqp_opts(env, token, bookmaker_id),
+         {:ok, channel, queue} <- Config.setup_channel(uri, opts),
+         {:ok, _} <- AMQP.Queue.subscribe(channel, queue, handler) do
+    else
+      error -> error
     end
-    {:ok, _} = AMQP.Queue.subscribe(chan, q, handler)
   end
 end
