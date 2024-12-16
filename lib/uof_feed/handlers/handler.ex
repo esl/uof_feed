@@ -1,4 +1,4 @@
-defmodule UofFeed.Handlers.Behaviour do
+defmodule UofFeed.Handler do
   @moduledoc """
   Behaviour for message handlers.
   Contains default implementation for `handle_message/1`
@@ -6,7 +6,7 @@ defmodule UofFeed.Handlers.Behaviour do
 
   defmacro __using__(_) do
     quote do
-      @behaviour UofFeed.Handlers.Behaviour
+      @behaviour UofFeed.Handler
       @impl true
       def handle_message(_message) do
         {:error, :not_implemented}
@@ -16,5 +16,5 @@ defmodule UofFeed.Handlers.Behaviour do
     end
   end
 
-  @callback handle_message(charlist()) :: :ok
+  @callback handle_message(String.t()) :: :ok
 end

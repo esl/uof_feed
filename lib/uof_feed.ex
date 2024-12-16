@@ -22,7 +22,7 @@ defmodule UofFeed do
 
   """
   @spec connect_and_subscribe(
-          environemnt :: atom(),
+          environment :: atom(),
           amqp_token :: String.t(),
           bookmaker_id :: integer(),
           handler :: function()

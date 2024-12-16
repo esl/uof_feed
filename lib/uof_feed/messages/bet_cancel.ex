@@ -40,7 +40,7 @@ defmodule UofFeed.Messages.BetCancel do
 
   ## Examples
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       ...> <bet_cancel end_time="1564598513000" event_id="sr:match:18941600" product="1"
       ...>    start_time="1564597838000" timestamp="1564602448841">
@@ -69,7 +69,7 @@ defmodule UofFeed.Messages.BetCancel do
 
   Errors encountered during data processing will be reported.
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       ...> <bet_cancel end_time="1564598513000" event_id="sr:match:18941600" product="1"
       ...>    start_time="invalid" timestamp="1564602448841">
@@ -79,7 +79,7 @@ defmodule UofFeed.Messages.BetCancel do
       iex> UofFeed.Messages.BetCancel.new(input)
       {:error, {[:start_time], "Invalid data provided, expected integer as string, received: invalid"}}
   """
-  @spec new(xml :: charlist()) ::
+  @spec new(xml :: String.t()) ::
           {:ok, __MODULE__.t()} | {:error, {access_path :: list(atom()), message :: String.t()}}
   def new(xml) do
     xml

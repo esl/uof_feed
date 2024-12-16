@@ -35,7 +35,7 @@ defmodule UofFeed.Messages.OddsChange do
 
   ## Examples
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       ...> <odds_change event_id="sr:match:1234" timestamp="1234" product="2">
       ...> <sport_event_status status="1" reporting="1" match_status="1" home_score="2" away_score="0">
@@ -63,7 +63,7 @@ defmodule UofFeed.Messages.OddsChange do
           clock: %UofFeed.Messages.Clock{
             match_time: "10:00",
             remaining_time: "50:00",
-            stopped: nil
+            stopped: true
           },
         },
         odds: %UofFeed.Messages.Odds{
@@ -94,7 +94,7 @@ defmodule UofFeed.Messages.OddsChange do
         }
       }}
   """
-  @spec new(xml :: charlist()) ::
+  @spec new(xml :: String.t()) ::
           {:ok, __MODULE__.t()} | {:error, {access_path :: list(atom()), message :: String.t()}}
   def new(xml) do
     xml

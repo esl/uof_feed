@@ -26,7 +26,7 @@ defmodule UofFeed.Messages.Alive do
 
   ## Examples
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <alive timestamp="1234579" product="2" subscribed="1"/>
       ...> '''
       iex> UofFeed.Messages.Alive.new(input)
@@ -38,13 +38,13 @@ defmodule UofFeed.Messages.Alive do
 
   Errors encountered dring data processing will be reported.
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <alive timestamp="invalid" product="2" subscribed="1"/>
       ...> '''
       iex> UofFeed.Messages.Alive.new(input)
       {:error, {[:timestamp], "Invalid data provided, expected integer as string, received: invalid"}}
   """
-  @spec new(xml :: charlist()) ::
+  @spec new(xml :: String.t()) ::
           {:ok, __MODULE__.t()} | {:error, {access_path :: list(atom()), message :: String.t()}}
   def new(xml) do
     xml

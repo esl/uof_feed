@@ -14,34 +14,32 @@ defmodule UofFeed.DataSchema.Utils do
 
   ## Examples
 
-      iex> UofFeed.DataSchema.Utils.to_text(~c"test")
+      iex> UofFeed.DataSchema.Utils.to_text("test")
       {:ok, "test"}
   """
-  @spec to_text(data :: charlist()) :: {:ok, String.t()}
-  def to_text(data), do: {:ok, to_string(data)}
+  @spec to_text(data :: String.t()) :: {:ok, String.t()}
+  def to_text(data), do: {:ok, data}
 
   @doc ~S"""
-  Convert provided charlist to float represented by Decimal.
+  Convert provided charlist containing a numeral to a Decimal.
 
   ## Examples
 
-      iex> UofFeed.DataSchema.Utils.to_decimal(~c"1.12")
+      iex> UofFeed.DataSchema.Utils.to_decimal("1.12")
       {:ok, Decimal.new("1.12")}
 
-      iex> UofFeed.DataSchema.Utils.to_decimal(~c"invalid")
-      {:error, "Invalid data provided, expected float as string, received: invalid"}
+      iex> UofFeed.DataSchema.Utils.to_decimal("invalid")
+      {:error, "Invalid data provided, expected numeral as string, received: invalid"}
   """
-  @spec to_decimal(data :: charlist()) :: {:ok, Decimal.t()} | {:error, String.t()}
+  @spec to_decimal(data :: String.t()) :: {:ok, Decimal.t()} | {:error, String.t()}
   def to_decimal(data) do
     decimal =
-      data
-      |> to_string()
-      |> maybe_convert(:decimal)
+      maybe_convert(data, :decimal)
 
     {:ok, decimal}
   rescue
     Decimal.Error ->
-      {:error, "Invalid data provided, expected float as string, received: #{data}"}
+      {:error, "Invalid data provided, expected numeral as string, received: #{data}"}
   end
 
   @doc ~S"""
@@ -49,19 +47,16 @@ defmodule UofFeed.DataSchema.Utils do
 
   ## Examples
 
-      iex> UofFeed.DataSchema.Utils.to_integer(~c"123")
+      iex> UofFeed.DataSchema.Utils.to_integer("123")
       {:ok, 123}
 
-      iex> UofFeed.DataSchema.Utils.to_integer(~c"invalid")
+      iex> UofFeed.DataSchema.Utils.to_integer("invalid")
       {:error, "Invalid data provided, expected integer as string, received: invalid"}
 
   """
-  @spec to_integer(data :: charlist()) :: {:ok, integer()} | {:error, String.t()}
+  @spec to_integer(data :: String.t()) :: {:ok, integer()} | {:error, String.t()}
   def to_integer(data) do
-    number =
-      data
-      |> to_string()
-      |> maybe_convert(:integer)
+    number = maybe_convert(data, :integer)
 
     {:ok, number}
   rescue
@@ -74,16 +69,16 @@ defmodule UofFeed.DataSchema.Utils do
 
   ## Examples
 
-      iex> UofFeed.DataSchema.Utils.to_boolean(~c'true')
+      iex> UofFeed.DataSchema.Utils.to_boolean("true")
       {:ok, true}
 
-      iex> UofFeed.DataSchema.Utils.to_boolean(~c'false')
+      iex> UofFeed.DataSchema.Utils.to_boolean("false")
       {:ok, false}
   """
-  @spec to_boolean(data :: charlist()) :: {:ok, boolean()}
-  def to_boolean(data) when data == ~c"true", do: {:ok, true}
-  def to_boolean(data) when data == ~c"false", do: {:ok, false}
-  def to_boolean(_), do: {:ok, nil}
+  @spec to_boolean(data :: String.t()) :: {:ok, boolean()}
+  def to_boolean("true"), do: {:ok, true}
+  def to_boolean("false"), do: {:ok, false}
+  def to_boolean(d), do: {:ok, nil}
 
   defp maybe_convert("", _), do: nil
   defp maybe_convert(data, :integer), do: String.to_integer(data)

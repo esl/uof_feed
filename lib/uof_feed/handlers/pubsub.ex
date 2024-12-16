@@ -4,7 +4,7 @@ defmodule UofFeed.Handlers.PubSub do
 
   Processing is done via `UofFeed.Mapper.call/1`.
   """
-  @behaviour UofFeed.Handlers.Behaviour
+  @behaviour UofFeed.Handler
   @topic Application.compile_env!(:uof_feed, :pubsub_topic)
 
   alias Phoenix.PubSub

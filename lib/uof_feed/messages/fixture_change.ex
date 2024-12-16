@@ -40,7 +40,7 @@ defmodule UofFeed.Messages.FixtureChange do
 
   ## Examples
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       ...> <fixture_change start_time="1730223000000" product="1" event_id="sr:match:52371543"
       ...>    timestamp="1729840401716" change_type="1" />
@@ -58,7 +58,7 @@ defmodule UofFeed.Messages.FixtureChange do
 
   Optional fields like `change_type` don't have to be present in the input structure:
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       ...> <fixture_change start_time="1730223000000" product="1"
       ...>    event_id="sr:match:52371543" timestamp="1729840401716"/>"
@@ -77,7 +77,7 @@ defmodule UofFeed.Messages.FixtureChange do
   Errors encoutered during data processing will be reported.
   NOTE: Only the first error is reported.
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       ...> <fixture_change start_time="invalid" product="1"
       ...>    event_id="sr:match:52371543" timestamp="1729840401716"/>
@@ -85,7 +85,7 @@ defmodule UofFeed.Messages.FixtureChange do
       iex> UofFeed.Messages.FixtureChange.new(input)
       {:error, {[:start_time], "Invalid data provided, expected integer as string, received: invalid"}}
   """
-  @spec new(xml :: charlist()) ::
+  @spec new(xml :: String.t()) ::
           {:ok, __MODULE__.t()} | {:error, {access_path :: list(atom()), message :: String.t()}}
   def new(xml) do
     xml

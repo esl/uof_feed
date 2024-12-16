@@ -23,7 +23,7 @@ defmodule UofFeed.AMQP.Config do
   @doc ~S"""
   Returns URI and connection options based on provided information.
 
-  Available environemnts:
+  Available environments:
     - `:production`
     - `:integration` (default)
     - `:replay`
@@ -32,7 +32,7 @@ defmodule UofFeed.AMQP.Config do
     - `:proxy_singapore`
     - `:proxy_tokyo`
 
-  Providing environemnt from outside of above list will result in response `{:error, :invalid_environment}`
+  Providing environment from outside of above list will result in response `{:error, :invalid_environment}`
 
   ## Examples
 
@@ -43,7 +43,7 @@ defmodule UofFeed.AMQP.Config do
       {:error, :invalid_environment}
   """
   @spec amqp_opts(
-          environemnt :: atom(),
+          environment :: atom(),
           amqp_token :: String.t(),
           bookmaker_id :: integer(),
           integer()

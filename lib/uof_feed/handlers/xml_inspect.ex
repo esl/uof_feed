@@ -2,7 +2,7 @@ defmodule UofFeed.Handlers.XMLInspect do
   @moduledoc """
   Default message handler, prints RAW XML into the logs.
   """
-  @behaviour UofFeed.Handlers.Behaviour
+  @behaviour UofFeed.Handler
 
   require Logger
 

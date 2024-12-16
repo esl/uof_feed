@@ -4,7 +4,7 @@ defmodule UofFeed.Handlers.DataSchemaInspect do
 
   Processing is done via `UofFeed.Mapper.call/1`.
   """
-  @behaviour UofFeed.Handlers.Behaviour
+  @behaviour UofFeed.Handler
 
   require Logger
 

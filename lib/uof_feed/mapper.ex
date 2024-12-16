@@ -20,7 +20,7 @@ defmodule UofFeed.Mapper do
 
   ## Examples
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       ...> <fixture_change start_time="1730223000000" product="1"
       ...>    event_id="sr:match:52371543" timestamp="1729840401716"/>"
@@ -36,9 +36,9 @@ defmodule UofFeed.Mapper do
         }
       }
 
-  Unsupported messages returns relevant error:
+  Unsupported messages return a relevant error:
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       ...> <other_message start_time="1730223000000" product="1"
       ...>    event_id="sr:match:52371543" timestamp="1729840401716"/>"
@@ -46,7 +46,7 @@ defmodule UofFeed.Mapper do
       iex> UofFeed.Mapper.call(input)
       {:error, :unsupported_message}
   """
-  @spec call(xml :: charlist()) ::
+  @spec call(xml :: String.t()) ::
           {:ok, FixtureChange.t() | OddsChange.t() | BetCancel.t() | BetStop.t()}
           | {:error, :unsupported_message}
   def call(xml) do

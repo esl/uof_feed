@@ -34,7 +34,7 @@ defmodule UofFeed.Messages.BetSettlement do
 
   ## Examples
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       ...> <bet_settlement certainty="2" product="3" event_id="sr:match:16807109" timestamp="1547538073717">
       ...>  <outcomes>
@@ -83,9 +83,9 @@ defmodule UofFeed.Messages.BetSettlement do
       }}
 
 
-  Errors encountered dring data processing will be reported.
+  Errors encountered during data processing will be reported.
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       ...> <bet_settlement certainty="invalid" product="3" event_id="sr:match:16807109" timestamp="1547538073717">
       ...>  <outcomes>
@@ -99,7 +99,7 @@ defmodule UofFeed.Messages.BetSettlement do
       iex> UofFeed.Messages.BetSettlement.new(input)
       {:error, {[:certainty], "Invalid data provided, expected integer as string, received: invalid"}}
   """
-  @spec new(xml :: charlist()) ::
+  @spec new(xml :: String.t()) ::
           {:ok, __MODULE__.t()} | {:error, access_path :: list(atom()), message :: String.t()}
   def new(xml) do
     xml

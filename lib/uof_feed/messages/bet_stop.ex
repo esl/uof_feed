@@ -33,7 +33,7 @@ defmodule UofFeed.Messages.BetStop do
 
   ## Examples
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       ...> <bet_stop timestamp="12345" product="3" event_id="sr:match:471123" groups="all"/>
       ...> '''
@@ -47,14 +47,14 @@ defmodule UofFeed.Messages.BetStop do
 
   Errors encountered during data processing will be reported.
 
-      iex> input = ~c'''
+      iex> input = '''
       ...> <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       ...> <bet_stop timestamp="12345" product="invalid" event_id="sr:match:471123" groups="all"/>
       ...> '''
       iex> UofFeed.Messages.BetStop.new(input)
       {:error, {[:product], "Invalid data provided, expected integer as string, received: invalid"}}
   """
-  @spec new(xml :: charlist()) ::
+  @spec new(xml :: String.t()) ::
           {:ok, __MODULE__.t()} | {:error, {access_path :: list(atom()), message :: String.t()}}
   def new(xml) do
     xml
